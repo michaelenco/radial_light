@@ -93,8 +93,8 @@
         var xOffset = offset*Math.cos(a)
         var yOffset = offset*Math.sin(a)
 
-        if (Math.abs(cost) < 0.1) {
-          res = `linear-gradient(${t*180/Math.PI}deg, #ffffff20 ${R}px, white ${R+R*3}px)`
+        if (Math.abs(cost) < 0.001) {
+          res = getGradient(R,t,a+0.0001)
         } else {
           if (cost>0) {
             res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, white ${Math.abs(r)-R*3}px, #ffffff20 ${(Math.abs(r))}px)`
