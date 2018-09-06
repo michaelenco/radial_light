@@ -1,0 +1,184 @@
+<html>
+<style>
+  body {
+    overflow: hidden;
+  }
+  body {
+    background: black
+  }
+  .planet {
+    position: absolute;
+    overflow: hidden;
+    background: white;
+  }
+  span {
+    color: white;
+  }
+</style>
+  <body>
+    <span></span>
+    <div id="planet1" class="planet"></div> 
+    <div id="planet2" class="planet"></div> 
+    <div id="planet3" class="planet"></div> 
+    <div id="planet4" class="planet"></div> 
+    <script>
+      var span = document.querySelector('span')
+      var start = new Date()
+
+      var R = 70
+      var path_radius = 200
+      var path_center = [600, 300]
+      var lightSourceToCenter = 100
+      var levels = [{
+        scale: 0.3,
+        lightAngle: Math.PI/5
+      },{
+        scale: 0.5,
+        lightAngle: Math.PI/4
+      },{
+        scale: 0.7,
+        lightAngle: Math.PI/3
+      },{
+        scale: 1,
+        lightAngle: Math.PI/1.5
+      },{
+        scale: 2,
+        lightAngle: Math.PI
+      }]
+      var planets = [{
+        node: document.querySelector('#planet1'),
+        phase: 0,
+        level: 0,
+        scale: 0.3,
+        lightAngle: Math.PI/5
+      }, {
+        node: document.querySelector('#planet2'),
+        phase: Math.PI/2,
+        level: 1,
+        scale: 0.5,
+        lightAngle: Math.PI/4
+      }, {
+        node: document.querySelector('#planet3'),
+        phase: Math.PI,
+        level: 2,
+        scale: 0.7,
+        lightAngle: Math.PI/3
+      }, {
+        node: document.querySelector('#planet4'),
+        phase: Math.PI*1.5,
+        level: 3,
+        scale: 1,
+        lightAngle: Math.PI/1.5
+      }]
+     
+      /* R - radius
+      t - light angle in zy plane
+      a - light angle in xy plane */
+      function getGradient(R, t, a) {
+        var sint = Math.sin(t)
+        var cost = Math.cos(t)
+
+        var e = t-Math.PI/2
+        var sine = Math.sin(e)
+        if(sint < 0) {
+          e = t + Math.PI/2
+          sine = Math.sin(e)
+        }
+        colors = cost > 0 ? ['white', '#ffffff30'] : ['#ffffff30', 'white']
+        
+        var s = sine*R
+        var r = (s*s + R*R)/(2*s)
+        var offset = s-r
+
+        var xOffset = offset*Math.cos(a)
+        var yOffset = offset*Math.sin(a)
+
+        if (cost>0) {
+          res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, white ${Math.abs(r)-R*3}px, #ffffff20 ${(Math.abs(r))}px)`
+        } else {
+          res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, #ffffff20 ${(Math.abs(r))}px, white ${(Math.abs(r)+R*3)}px)`
+        }
+        return res
+         
+      }
+      setInterval(() => {
+        var elapsed = (new Date())-start
+        for (idx in planets) {
+          planet = planets[idx]
+          var scale = planet.scale
+          var planetRadius = R*scale
+          var pathRadius = path_radius*scale
+
+
+          planet.node.style.width = 2*planetRadius+"px"
+          planet.node.style.height = 2*planetRadius+"px"
+          planet.node.style.borderRadius = R+"px"
+          
+          var t = ((elapsed/3000) + planet.phase)%(2*Math.PI)
+
+          var sint = Math.sin(t)
+          var cost = Math.cos(t)
+
+          x = path_center[0] + pathRadius * cost
+          y = path_center[1] - pathRadius * sint
+
+          planet.node.style.left = x
+          planet.node.style.top = y
+
+          xyAngle = -Math.atan((R*sint)/lightSourceToCenter)
+          
+          gradient = getGradient(planetRadius, planet.lightAngle, xyAngle)
+          planet.node.style.background = gradient
+        }
+      },40)
+      
+      function raise() {
+        let raiseInterval = 500
+        let raiseSteps = 10
+        let node = document.createElement('div')
+        node.classList.add('planet')
+        document.body.append(node)
+        let p = {
+          node: node,
+          phase: planets[0].phase - Math.PI/2,
+          level: null,
+          scale: 0.1,
+          lightAngle: 0
+        }
+        planets.unshift(p)
+        for (let planet_idx in planets) {
+          planet = planets[planet_idx]
+          if(planet.level !== null) {
+            planets[planet_idx].level += 1
+          } else {
+            planets[planet_idx].level = 0
+          }
+          
+          step = 0
+          lightAngleStep = (levels[planet.level].lightAngle - planet.lightAngle)/raiseSteps
+          scaleStep = (levels[planet.level].scale - planet.scale)/raiseSteps
+          function raiseStep (id, scaleStep, lightAngleStep, step, totalSteps, timeout) {
+            planets[id].scale += scaleStep
+            planets[id].lightAngle += lightAngleStep
+            step += 1
+            if(step < totalSteps) {
+              setTimeout(() => raiseStep(id, scaleStep, lightAngleStep, step, totalSteps, timeout), timeout)
+            } else {
+              if(planets[id].level == 4) {
+                planets[id].node.remove()
+                planets.shift()
+                console.log(planets)
+              }
+            }
+          }
+          raiseStep(planet_idx, scaleStep, lightAngleStep, 0, raiseSteps, raiseInterval/raiseSteps)
+        }
+      }
+      document.onkeyup = e => {
+        if(e.key == " ") {
+          raise()
+        }
+      }
+    </script>
+  </body>
+</html>
