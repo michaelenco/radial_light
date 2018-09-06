@@ -96,7 +96,11 @@
         if (cost>0) {
           res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, white ${Math.abs(r)-R*3}px, #ffffff20 ${(Math.abs(r))}px)`
         } else {
-          res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, #ffffff20 ${(Math.abs(r))}px, white ${(Math.abs(r)+R*3)}px)`
+          if (cost == 0) {
+            res = `linear-gradient(${a*180/Math.PI}deg, #ffffff20 ${r}px, white ${r+R*3}px)`
+          } else {
+            res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, #ffffff20 ${(Math.abs(r))}px, white ${(Math.abs(r)+R*3)}px)`
+          }
         }
         return res
          
