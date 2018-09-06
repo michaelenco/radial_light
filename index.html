@@ -93,11 +93,11 @@
         var xOffset = offset*Math.cos(a)
         var yOffset = offset*Math.sin(a)
 
-        if (cost>0) {
-          res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, white ${Math.abs(r)-R*3}px, #ffffff20 ${(Math.abs(r))}px)`
+        if (Math.abs(cost) < 0.1) {
+          res = `linear-gradient(${t*180/Math.PI}deg, #ffffff20 ${R}px, white ${R+R*3}px)`
         } else {
-          if (cost == 0) {
-            res = `linear-gradient(${a*180/Math.PI}deg, #ffffff20 ${r}px, white ${r+R*3}px)`
+          if (cost>0) {
+            res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, white ${Math.abs(r)-R*3}px, #ffffff20 ${(Math.abs(r))}px)`
           } else {
             res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, #ffffff20 ${(Math.abs(r))}px, white ${(Math.abs(r)+R*3)}px)`
           }
@@ -137,7 +137,7 @@
       },40)
       
       function raise() {
-        let raiseInterval = 500
+        let raiseInterval = 200
         let raiseSteps = 10
         let node = document.createElement('div')
         node.classList.add('planet')
