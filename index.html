@@ -42,7 +42,7 @@
         scale: 1,
         lightAngle: Math.PI/1.5
       },{
-        scale: 2,
+        scale: 4,
         lightAngle: Math.PI
       }]
       var planets = [{
@@ -84,7 +84,7 @@
           e = t + Math.PI/2
           sine = Math.sin(e)
         }
-        colors = cost > 0 ? ['white', '#ffffff30'] : ['#ffffff30', 'white']
+        var colors = cost > 0 ? ['white', '#ffffff30'] : ['#ffffff30', 'white']
         
         var s = sine*R
         var r = (s*s + R*R)/(2*s)
@@ -112,20 +112,20 @@
 
           planet.node.style.width = 2*planetRadius+"px"
           planet.node.style.height = 2*planetRadius+"px"
-          planet.node.style.borderRadius = R+"px"
+          planet.node.style.borderRadius = planetRadius+"px"
           
-          var t = ((elapsed/3000) + planet.phase)%(2*Math.PI)
+          var t = ((elapsed/3000) + planet.phase + 1)%(2*Math.PI)
 
           var sint = Math.sin(t)
           var cost = Math.cos(t)
 
-          x = path_center[0] + pathRadius * cost
-          y = path_center[1] - pathRadius * sint
+          var x = path_center[0] + pathRadius * cost
+          var y = path_center[1] - pathRadius * sint
 
           planet.node.style.left = x
           planet.node.style.top = y
 
-          xyAngle = -Math.atan((R*sint)/lightSourceToCenter)
+          var xyAngle = -Math.atan((R*sint)/lightSourceToCenter)
           
           gradient = getGradient(planetRadius, planet.lightAngle, xyAngle)
           planet.node.style.background = gradient
@@ -142,7 +142,7 @@
           node: node,
           phase: planets[0].phase - Math.PI/2,
           level: null,
-          scale: 0.1,
+          scale: 0.01,
           lightAngle: 0
         }
         planets.unshift(p)
@@ -155,8 +155,8 @@
           }
           
           step = 0
-          lightAngleStep = (levels[planet.level].lightAngle - planet.lightAngle)/raiseSteps
-          scaleStep = (levels[planet.level].scale - planet.scale)/raiseSteps
+          var lightAngleStep = (levels[planet.level].lightAngle - planet.lightAngle)/raiseSteps
+          var scaleStep = (levels[planet.level].scale - planet.scale)/raiseSteps
           function raiseStep (id, scaleStep, lightAngleStep, step, totalSteps, timeout) {
             planets[id].scale += scaleStep
             planets[id].lightAngle += lightAngleStep
@@ -166,7 +166,7 @@
             } else {
               if(planets[id].level == 4) {
                 planets[id].node.remove()
-                planets.shift()
+                planets.splice(id, 1)
                 console.log(planets)
               }
             }
