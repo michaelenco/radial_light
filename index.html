@@ -62,7 +62,7 @@
         phase: Math.PI,
         level: 2,
         scale: 0.7,
-        lightAngle: Math.PI/3
+        lightAngle: Math.PI/2
       }, {
         node: document.querySelector('#planet4'),
         phase: Math.PI*1.5,
@@ -93,8 +93,9 @@
         var xOffset = offset*Math.cos(a)
         var yOffset = offset*Math.sin(a)
 
-        if (Math.abs(cost) < 0.001) {
-          res = getGradient(R,t,a+0.0001)
+        if (Math.abs(cost) < 0.1) {
+          let mid = Math.sqrt((Math.tan(a)**2) + 1)*R
+          res = `linear-gradient(${(-a+Math.PI/2)/(Math.PI*2)}turn, #ffffff20 50%, white ${mid+R*3}px)`
         } else {
           if (cost>0) {
             res = `radial-gradient(circle at ${R+xOffset}px ${R-yOffset}px, white ${Math.abs(r)-R*3}px, #ffffff20 ${(Math.abs(r))}px)`
